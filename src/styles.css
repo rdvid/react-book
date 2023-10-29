@@ -2,11 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-:root{
-    --value: 10;
-}
-
 html, body {
     width: 100vw;
-    height: 100vh;
+    height: fit-content;
 }
