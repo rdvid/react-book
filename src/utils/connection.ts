@@ -1,12 +1,13 @@
 import axios from 'axios';
-import * as dotenv from 'dotenv';
-
-dotenv.config()
 
 const axiosInstance = axios.create({
-    baseURL: process.env.BASE_URL,
-    timeout: 1000,
-    headers: {'access-id': process.env.ACCESS_KEY}
+    baseURL: import.meta.env.VITE_TEST,
+    timeout: 30000,
+    headers: {
+        'access-id': import.meta.env.VITE_ACCESS_KEY, 
+        'Content-Type': 'multipart/form-data'
+    }
 })
 
 export default axiosInstance;
+
