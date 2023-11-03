@@ -22,9 +22,10 @@ function Home(){
         // TODO: implement queue and multiple files behaviour with celery 
         multiple: false,
         accept: {
-        'document/*': ['.epub', '.pdf'],
+            'application/epub+zip': ['.epub'],
+            'application/pdf': ['.pdf'],
         },
-        validator: BaseValidator.nameLengthValidator        
+        validator: BaseValidator.fileSizeValidator        
     }
 
     const {acceptedFiles,
@@ -42,29 +43,49 @@ function Home(){
     ));
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        // TODO: develop submit and return
         e.preventDefault();
 
-        const { status, data } = await axios.post(
-            `/send?title=${form.title}&author=${form.author}`, 
-            {
-                data: { 
-                    file: acceptedFiles[0] 
-                }
-            }, 
-        )
+        try{
 
-        setResponse({
-            status,
-            message: data.message
-        });
+            const response = await axios.post(
+                `/send`,
+                {   
+                    data: { 
+                        file: acceptedFiles[0] 
+                    }
+                }, 
+                {
+                    params: {
+                        email: form.email,
+                        title: form.title.replace(' ', '+'),
+                        author: form.author.replace(' ', '+')
+                    },
+                }
+            )
+
+            const { status, data } = response;
+
+            setResponse({
+                status,
+                message: data.message
+            });
+            
+        }catch(err){
+            console.log(err.message)
+
+            const { status, data } = err.response;
+
+            setResponse({
+                status,
+                message: data.message
+            });
+        }
 
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newUpdate = e.target.name
         const value = e.target.value
-        
         setForm({...form, [newUpdate]: newUpdate == 'email' ? value.trim() : value })
     }
 
@@ -181,7 +202,7 @@ function Home(){
                     {
                         acceptedFiles.length < 1 
                         ? <p className='px-4 py-8 border-dashed	border-2 border-black hover:cursor-pointer text-center'>Drag 'n' drop some files here, <br /> or click to select files: </p>
-                        : <p className='px-4 py-8 border-dashed	border-2 border-black bg-green-400 hover:cursor-pointer text-center animate-pulse'>Ready to send files</p>
+                        : <p className='px-4 py-8 border-dashed	border-2 border-black hover:cursor-pointer text-center animate-pulse'>{acceptedFiles[0].name}</p>
                     }
                 <em>(Only Epubs and PDFs will be accepted)</em>
             </div>
@@ -189,11 +210,7 @@ function Home(){
             <input type="file" className="file-input file-input-bordered file-input-sm w-full max-w-xs" /> */}
             <div className="m-4 items-center">
                 <button className="btn" onClick={()=>{
-
-                    if (document) {
-                        (document.getElementById('file_table_model') as HTMLFormElement).showModal();
-                    }
-            
+                    (document.getElementById('file_table_model') as HTMLFormElement).showModal();
                 }}><i className="fa-solid fa-rectangle-list fa-xl"></i></button>
                 <dialog id="file_table_model" className="modal modal-bottom sm:modal-middle">
                     <div className="modal-box">
@@ -228,8 +245,11 @@ function Home(){
             </div>    
             <div>
                 <button onClick={() => clearForm()} className="btn btn-outline m-2">Clear</button>
-            
-                <button type="submit" form="book-form" className="btn btn-success m-2 animate-pulse">Submit</button>
+                {
+                    BaseValidator.canSubmit(form) && acceptedFiles[0]
+                    ?<button type="submit" form="book-form" className="btn btn-success m-2 animate-pulse">Submit</button>
+                    :<button type="submit" form="book-form" className="btn btn-disabled m-2">Submit</button>
+                }
             </div>
         </div>
     )

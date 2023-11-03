@@ -1,3 +1,10 @@
+interface HomeForm {
+  email: string;
+  title: string;
+  author: string;
+}
+
+
 export abstract class BaseValidator {
 
     static isEmail(email: string){
@@ -8,7 +15,7 @@ export abstract class BaseValidator {
         return true;
     }
 
-    static nameLengthValidator(file: File) {
+    static fileSizeValidator(file: File) {
         if (file.size > 500000) {
           return {
             code: "file-too-large",
@@ -16,6 +23,23 @@ export abstract class BaseValidator {
           };
         }
         return null;
+    }
+
+    static canSubmit(form: HomeForm){
+      
+      if(!this.isEmail(form.email)){
+        return false;
+      }
+
+      if(!form.title || form.title.length > 100){
+        return false;
+      }
+
+      if(!form.author || form.author.length > 100){
+        return false;
+      }
+
+      return true;
     }
 
 }
