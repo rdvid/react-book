@@ -1,9 +1,13 @@
 <h1 align="center">React Book</h1>
 
+<div align="center">
+
 ![React](https://img.shields.io/badge/React-000000?style=for-the-badge&logo=react&logoColor=blue)
 ![Tailwind](https://img.shields.io/badge/Tailwind-38B2AC?style=for-the-badge&logo=tailwindcss&logoColor=white)
 ![Typescript](https://img.shields.io/badge/Typescript-3A33D1?style=for-the-badge&logo=typescript&logoColor=white)
 ![Git](https://img.shields.io/badge/Git-000000?style=for-the-badge&logo=git&logoColor=red)
+</div>
+
 
 <p align="center">
    <img height=500 width=500 src="https://f005.backblazeb2.com/file/debbuggers/_ee852ade-2b90-4342-b5f6-c7194b277dac.jpg" alt="dark mage with a grimoire summoning spells">  
